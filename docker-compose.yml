@@ -1,0 +1,35 @@
+version: '3.8'
+
+services:
+  eureka-server:
+    build: ./eureka
+    ports:
+      - "8761:8761"
+    networks:
+      - microservices-network
+
+  service1:
+    build: ./service1
+    ports:
+      - "8081:8081"
+    environment:
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
+    networks:
+      - microservices-network
+    depends_on:
+      - eureka-server
+
+  service2:
+    build: ./service2
+    ports:
+      - "8082:8082"
+    environment:
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
+    networks:
+      - microservices-network
+    depends_on:
+      - eureka-server
+
+networks:
+  microservices-network:
+    driver: bridge
